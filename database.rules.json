@@ -1,0 +1,46 @@
+{
+  "rules": {
+    "rooms": {
+      "123654": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "players": {
+          "$playerId": {
+            ".read": "auth != null",
+            ".write": "auth != null && (auth.uid === $playerId || !data.exists() || root.child('rooms/123654/gameMeta/status').val() === 'lobby')"
+          }
+        },
+        "privateData": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        },
+        "actions": {
+          ".read": "auth != null",
+          ".write": "auth != null",
+          "mafia": {
+            "$playerId": {
+              ".write": "auth != null && auth.uid === $playerId"
+            }
+          },
+          "votes": {
+            "$playerId": {
+              ".write": "auth != null && auth.uid === $playerId"
+            }
+          }
+        },
+        "chat": {
+          ".read": "auth != null",
+          "$messageId": {
+            ".write": "auth != null && newData.hasChildren(['playerId', 'name', 'text', 'timestamp']) && newData.child('playerId').val() === auth.uid && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 240"
+          }
+        },
+        "gameMeta": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        }
+      }
+    },
+    ".read": false,
+    ".write": false
+  }
+}

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Mafia - Multiplayer Browser Party Game">
+    <title>MAFIA — Dark Party Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK (compat for simplicity with CDN) -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Loading / Auth Screen -->
+        <div id="screen-loading" class="screen active">
+            <div class="loading-content">
+                <div class="logo-large">MAFIA</div>
+                <div class="spinner"></div>
+                <p class="loading-text">Connecting...</p>
+            </div>
+        </div>
+
+        <!-- Join Screen -->
+        <div id="screen-join" class="screen">
+            <div class="join-card">
+                <h1 class="logo">MAFIA</h1>
+                <p class="subtitle">A game of deception &amp; deduction</p>
+                <div class="room-badge">
+                    <span class="label">ROOM CODE</span>
+                    <span class="code">123654</span>
+                </div>
+                <div class="form-group">
+                    <label for="player-name">Your Name</label>
+                    <input type="text" id="player-name" maxlength="16" placeholder="Enter your name" autocomplete="off" autofocus>
+                </div>
+                <button id="btn-join" class="btn btn-primary btn-large">JOIN ROOM</button>
+                <p id="join-error" class="error-msg"></p>
+                <p class="hint">Exactly 8 players required to start</p>
+            </div>
+        </div>
+
+        <!-- Lobby Screen -->
+        <div id="screen-lobby" class="screen">
+            <header class="top-bar">
+                <div class="logo-small">MAFIA</div>
+                <div class="room-info">
+                    <span class="label">ROOM</span>
+                    <span class="code">123654</span>
+                </div>
+                <div class="player-count" id="lobby-count">0 / 8</div>
+            </header>
+            <main class="lobby-main">
+                <h2 class="section-title">Players</h2>
+                <ul id="lobby-players" class="player-list"></ul>
+                <div class="lobby-actions">
+                    <button id="btn-start" class="btn btn-primary btn-large" disabled>START GAME</button>
+                    <p id="lobby-status" class="status-text">Waiting for players...</p>
+                </div>
+            </main>
+            <div class="chat-panel lobby-chat">
+                <div class="chat-header">Table Chat</div>
+                <div id="chat-messages-lobby" class="chat-messages"></div>
+                <form id="chat-form-lobby" class="chat-form">
+                    <input type="text" id="chat-input-lobby" maxlength="240" placeholder="Type a message..." autocomplete="off">
+                    <button type="submit" class="btn btn-small">Send</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="screen-game" class="screen">
+            <header class="top-bar">
+                <div class="logo-small">MAFIA</div>
+                <div class="phase-info">
+                    <span id="phase-label">Phase</span>
+                    <span id="round-label">Round 1</span>
+                </div>
+                <div class="player-count" id="alive-count">8 Alive</div>
+            </header>
+
+            <div class="game-layout">
+                <!-- Left: Private Panel -->
+                <aside class="private-panel" id="private-panel">
+                    <div class="role-card" id="role-card">
+                        <div class="role-label">YOUR ROLE</div>
+                        <div class="role-name" id="my-role">—</div>
+                        <div class="role-team" id="my-team"></div>
+                    </div>
+                    <div class="private-info" id="private-info"></div>
+                    <div class="action-area" id="action-area">
+                        <!-- Dynamic action UI -->
+                    </div>
+                    <div class="status-area" id="status-area"></div>
+                </aside>
+
+                <!-- Right: Player Board -->
+                <section class="player-board">
+                    <h2 class="section-title">Players</h2>
+                    <div id="player-grid" class="player-grid"></div>
+                </section>
+            </div>
+
+            <!-- Bottom: Chat -->
+            <div class="chat-panel game-chat">
+                <div class="chat-header">Table Chat</div>
+                <div id="chat-messages" class="chat-messages"></div>
+                <form id="chat-form" class="chat-form">
+                    <input type="text" id="chat-input" maxlength="240" placeholder="Type a message..." autocomplete="off">
+                    <button type="submit" class="btn btn-small">Send</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="screen-gameover" class="screen">
+            <div class="gameover-content">
+                <h1 class="gameover-title" id="winner-title">GAME OVER</h1>
+                <div class="winner-banner" id="winner-banner"></div>
+                <h2 class="section-title">Final Roles</h2>
+                <ul id="final-roles" class="final-roles-list"></ul>
+                <button id="btn-play-again" class="btn btn-primary btn-large">BACK TO LOBBY</button>
+            </div>
+        </div>
+
+        <!-- Toast / Modal -->
+        <div id="toast" class="toast"></div>
+        <div id="modal" class="modal hidden">
+            <div class="modal-content">
+                <p id="modal-text"></p>
+                <button id="modal-ok" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
